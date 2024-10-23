@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    me.bvn13.openfeign.logger.NormalizedFeignLogger: DEBUG
+
+jwt:
+  issuer: ntd_software_challenge
+  secret: ntd_challenge_secret_**++321++***
+  expiration: 3_600_000 # 1 Hour
+
+wallets:
+  initial-balance: 100.00
+
+integrations:
+  operations-service:
+    base-url: http://operations-service:8080/api/internal/v1
+
+spring:
+  application:
+    name: records-service
+
+  h2:
+    console:
+      enabled: false

@@ -1,0 +1,13 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  issuer: ntd_software_challenge
+  secret: ntd_challenge_secret_**++321++***
+  expiration: 3_600_000 # 1 Hour
+
+spring:
+  application:
+    name: auth-service

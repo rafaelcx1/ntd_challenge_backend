@@ -1,0 +1,175 @@
+name: ntd_challenge
+
+services:
+  gateway:
+    build:
+      context: ./gateway
+    depends_on:
+      - auth-service
+      - auth-db
+      - operations-service
+      - operations-db
+      - records-service
+      - records-db
+
+    ports:
+      - 9000:80
+    networks:
+      - ntd-network
+
+  #### AUTH SERVICE #####
+  auth-service:
+    build:
+      context: ./auth-service
+
+    restart: always
+
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DATABASE_HOST: auth-db
+      DATABASE_PORT: 3306
+      DATABASE_NAME: auth_db
+      DATABASE_USERNAME: auth_db_user
+      DATABASE_PASSWORD: Password@123
+
+    depends_on:
+      auth-db:
+        condition: service_healthy
+
+    networks:
+      - ntd-network
+
+  auth-db:
+    image: mysql:8.0.33
+
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u$$MYSQL_USER -p$$MYSQL_PASSWORD" ]
+      interval: 10s
+      timeout: 15s
+      retries: 5
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: auth_db
+      MYSQL_USER: auth_db_user
+      MYSQL_PASSWORD: Password@123
+
+    networks:
+      - ntd-network
+    volumes:
+      - ./volumes/auth_db:/var/lib/mysql
+
+  #### OPERATIONS SERVICE #####
+  operations-service:
+    build:
+      context: ./operations-service
+
+    restart: always
+
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DATABASE_HOST: operations-db
+      DATABASE_PORT: 3306
+      DATABASE_NAME: operations_db
+      DATABASE_USERNAME: operations_db_user
+      DATABASE_PASSWORD: Password@123
+
+    depends_on:
+      operations-db:
+        condition: service_healthy
+
+    networks:
+      - ntd-network
+
+  operations-db:
+    image: mysql:8.0.33
+
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u$$MYSQL_USER -p$$MYSQL_PASSWORD" ]
+      interval: 10s
+      timeout: 15s
+      retries: 5
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: operations_db
+      MYSQL_USER: operations_db_user
+      MYSQL_PASSWORD: Password@123
+
+    networks:
+      - ntd-network
+    volumes:
+      - ./volumes/operations_db:/var/lib/mysql
+
+  #### RECORDS SERVICE #####
+  records-service:
+    build:
+      context: ./records-service
+
+    restart: always
+
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DATABASE_HOST: records-db
+      DATABASE_PORT: 3306
+      DATABASE_NAME: records_db
+      DATABASE_USERNAME: records_db_user
+      DATABASE_PASSWORD: Password@123
+
+    depends_on:
+      records-db:
+        condition: service_healthy
+
+    networks:
+      - ntd-network
+
+  records-db:
+    image: mysql:8.0.33
+
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u$$MYSQL_USER -p$$MYSQL_PASSWORD" ]
+      interval: 10s
+      timeout: 15s
+      retries: 5
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: records_db
+      MYSQL_USER: records_db_user
+      MYSQL_PASSWORD: Password@123
+
+    networks:
+      - ntd-network
+    volumes:
+      - ./volumes/records_db:/var/lib/mysql
+
+  #### LOGGING SYSTEM - GRAFANA STACK ####
+  loki:
+    image: 'grafana/loki:2.9.2'
+    command: '-config.file=/etc/loki/local-config.yaml'
+    volumes:
+      - ./volumes/loki:/loki
+    networks:
+      - ntd-network
+
+  grafana:
+    image: 'grafana/grafana:latest'
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    entrypoint:
+      - sh
+      - '-euc'
+      - "mkdir -p /etc/grafana/provisioning/datasources\ncat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml\napiVersion: 1\ndatasources:\n- name: Loki\n  type: loki\n  access: proxy \n  orgId: 1\n  url: http://loki:3100\n  basicAuth: false\n  isDefault: true\n  version: 1\n  editable: false\nEOF\n/run.sh\n"
+    networks:
+      - ntd-network
+    volumes:
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+    ports:
+      - '5000:3000'
+
+networks:
+  ntd-network:
+    driver: bridge
