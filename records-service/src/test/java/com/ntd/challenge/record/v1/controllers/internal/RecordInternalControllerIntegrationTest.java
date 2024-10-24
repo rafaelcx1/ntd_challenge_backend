@@ -5,9 +5,12 @@ import com.ntd.challenge.record.v1.controllers.internal.requests.AddOperationToR
 import com.ntd.challenge.record.v1.entities.enums.OperationTypeEnum;
 import com.ntd.challenge.record.v1.exceptions.types.NotEnoughBalanceException;
 import com.ntd.challenge.record.v1.repositories.RecordRepository;
+import com.ntd.challenge.record.v1.security.utils.AuthContextUtils;
 import com.ntd.challenge.record.v1.utils.AbstractIntegrationTest;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -19,6 +22,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,9 +37,20 @@ public class RecordInternalControllerIntegrationTest extends AbstractIntegration
     @Autowired
     private RecordRepository recordRepository;
 
+    private static MockedStatic<AuthContextUtils> authContextUtilsMockedStatic;
+
+    @BeforeEach
+    public void setup() {
+        when(walletProperties.getInitialBalance()).thenReturn(new BigDecimal(100));
+        authContextUtilsMockedStatic = mockStatic(AuthContextUtils.class);
+        authContextUtilsMockedStatic.when(AuthContextUtils::getLoggedUserId).thenReturn(1);
+    }
+
     @AfterEach
-    public void destroy() {
+    public void teardown() {
         recordRepository.deleteAll();
+        authContextUtilsMockedStatic.clearInvocations();
+        authContextUtilsMockedStatic.close();
     }
 
     @Test

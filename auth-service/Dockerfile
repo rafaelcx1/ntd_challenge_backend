@@ -6,7 +6,7 @@ COPY gradle $APP_HOME/gradle
 RUN chmod +x gradlew
 RUN ./gradlew build || return 0
 COPY . .
-RUN ./gradlew build -x test
+RUN ./gradlew build
 
 FROM openjdk:17-jdk-buster
 ENV ARTIFACT_NAME=auth-service-0.0.1-SNAPSHOT.jar

@@ -31,7 +31,7 @@ public final class RecordSpecifications {
     public static Specification<Record> amountLike(String filter) {
         return (root, query, criteriaBuilder) -> {
             if (filter == null || filter.isEmpty()) {
-                return criteriaBuilder.disjunction();
+                return criteriaBuilder.conjunction();
             }
 
             String normalizedFilter = "%" + filter.toLowerCase() + "%";
@@ -45,7 +45,7 @@ public final class RecordSpecifications {
     public static Specification<Record> userBalanceLike(String filter) {
         return (root, query, criteriaBuilder) -> {
             if (filter == null || filter.isEmpty()) {
-                return criteriaBuilder.disjunction();
+                return criteriaBuilder.conjunction();
             }
 
             String normalizedFilter = "%" + filter.toLowerCase() + "%";
@@ -59,7 +59,7 @@ public final class RecordSpecifications {
     public static Specification<Record> operationResponseLike(String filter) {
         return (root, query, criteriaBuilder) -> {
             if (filter == null || filter.isEmpty()) {
-                return criteriaBuilder.disjunction();
+                return criteriaBuilder.conjunction();
             }
 
             String normalizedFilter = "%" + filter.toLowerCase() + "%";
@@ -73,7 +73,7 @@ public final class RecordSpecifications {
     public static Specification<Record> dateLike(String filter, String timezone) {
         return (root, query, criteriaBuilder) -> {
             if (filter == null || filter.isEmpty()) {
-                return criteriaBuilder.disjunction();
+                return criteriaBuilder.conjunction();
             }
 
             String normalizedFilter = "%" + filter.toLowerCase() + "%";

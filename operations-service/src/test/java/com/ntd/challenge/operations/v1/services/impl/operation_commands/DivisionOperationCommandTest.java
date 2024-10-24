@@ -64,14 +64,14 @@ public class DivisionOperationCommandTest {
         DivisionOperationCommand command = new DivisionOperationCommand(value, divisor, scale);
 
         // Then
-        assertThrows(ArithmeticException.class, command::getOperationResult);
+        assertThrows(DivideByZeroException.class, command::getOperationResult);
     }
 
     @Test
     void getOperationResult_ShouldThrowWhenValueIsZero() {
         // Given
-        BigDecimal value = BigDecimal.ZERO;
-        BigDecimal divisor = new BigDecimal("5.5");
+        BigDecimal value = new BigDecimal("5.5");
+        BigDecimal divisor = BigDecimal.ZERO;
         int scale = 2;
         DivisionOperationCommand command = new DivisionOperationCommand(value, divisor, scale);
 

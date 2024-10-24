@@ -4,8 +4,11 @@ import com.ntd.challenge.record.v1.configurations.WalletProperties;
 import com.ntd.challenge.record.v1.controllers.internal.requests.AddOperationToRecordRequest;
 import com.ntd.challenge.record.v1.exceptions.types.NotEnoughBalanceException;
 import com.ntd.challenge.record.v1.exceptions.types.RecordNotFoundException;
+import com.ntd.challenge.record.v1.integrations.operations_service.OperationsServiceIntegration;
 import com.ntd.challenge.record.v1.repositories.RecordRepository;
 import com.ntd.challenge.record.v1.security.utils.AuthContextUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -36,6 +39,9 @@ public class RecordServiceImplTest {
 
     @Mock
     private RecordRepository recordRepository;
+
+    @Mock
+    private OperationsServiceIntegration operationsServiceIntegration;
 
     @InjectMocks
     private RecordServiceImpl recordService;
@@ -107,17 +113,21 @@ public class RecordServiceImplTest {
     @Test
     void getRecords_ShouldReturnPagedRecords() {
         // Given
+        Integer loggedUserId = 1;
         String filter = "";
         Pageable pageable = PageRequest.of(0, 10);
         Page<Record> expectedPage = new PageImpl<>(List.of(new Record()));
 
         when(recordRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(expectedPage);
 
-        // When
-        Page<Record> result = recordService.getRecords(filter, pageable);
+        try (MockedStatic<AuthContextUtils> authContextMock = mockStatic(AuthContextUtils.class)) {
+            authContextMock.when(AuthContextUtils::getLoggedUserId).thenReturn(loggedUserId);
+            // When
+            Page<Record> result = recordService.getRecords(filter, pageable);
 
-        // Then
-        assertEquals(expectedPage, result);
+            // Then
+            assertEquals(expectedPage, result);
+        }
     }
 
     @Test

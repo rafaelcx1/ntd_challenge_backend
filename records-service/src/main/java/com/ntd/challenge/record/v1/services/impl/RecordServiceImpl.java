@@ -81,7 +81,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
-    public void deleteRecord(Integer id) throws RecordNotFoundException {
+    public synchronized void deleteRecord(Integer id) throws RecordNotFoundException {
         Integer loggedUserId = AuthContextUtils.getLoggedUserId();
 
         Record record = recordRepository.findByIdAndUserIdAndIsDeletedFalse(id, loggedUserId)

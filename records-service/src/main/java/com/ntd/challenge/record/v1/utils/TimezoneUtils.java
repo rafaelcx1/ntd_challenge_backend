@@ -8,7 +8,13 @@ public final class TimezoneUtils {
     private static final String TIMEZONE_HEADER = "X-Timezone";
 
     public static String getTimezone() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        if (requestAttributes == null) {
+            return "UTC";
+        }
+
+        HttpServletRequest request = requestAttributes
                 .getRequest();
 
         String timeZone = request.getHeader(TIMEZONE_HEADER);

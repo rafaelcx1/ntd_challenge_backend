@@ -17,7 +17,7 @@ public record DivisionOperationCommand(BigDecimal value, BigDecimal divisor, Int
 
     @Override
     public BigDecimal getOperationResult() {
-        if (value.compareTo(BigDecimal.ZERO) == 0) {
+        if (divisor.compareTo(BigDecimal.ZERO) == 0) {
             throw new DivideByZeroException();
         }
 

@@ -2,6 +2,7 @@ package com.ntd.challenge.record.v1.controllers;
 
 import com.ntd.challenge.record.v1.configurations.WalletProperties;
 import com.ntd.challenge.record.v1.entities.Record;
+import com.ntd.challenge.record.v1.integrations.operations_service.OperationsServiceIntegration;
 import com.ntd.challenge.record.v1.repositories.RecordRepository;
 import com.ntd.challenge.record.v1.security.utils.AuthContextUtils;
 import com.ntd.challenge.record.v1.utils.AbstractIntegrationTest;
@@ -31,6 +32,9 @@ public class RecordControllerIntegrationTest extends AbstractIntegrationTest {
 
     @MockBean
     private WalletProperties walletProperties;
+
+    @MockBean
+    private OperationsServiceIntegration operationsServiceIntegration;
 
     @Autowired
     private RecordRepository recordRepository;
@@ -72,6 +76,7 @@ public class RecordControllerIntegrationTest extends AbstractIntegrationTest {
         mockMvc.perform(get("/v1/records")
                         .param("page", "0")
                         .param("size", "5")
+                        .param("filter", "")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
@@ -126,7 +131,7 @@ public class RecordControllerIntegrationTest extends AbstractIntegrationTest {
         mockMvc.perform(get("/v1/records/balance")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string("0"));
+                .andExpect(content().string("0.00"));
     }
 
     @Test
@@ -146,7 +151,7 @@ public class RecordControllerIntegrationTest extends AbstractIntegrationTest {
         mockMvc.perform(get("/v1/records/balance")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string("40"));
+                .andExpect(content().string("40.00"));
     }
 
     private Record mockRecord(BigDecimal balance, BigDecimal amount) {
