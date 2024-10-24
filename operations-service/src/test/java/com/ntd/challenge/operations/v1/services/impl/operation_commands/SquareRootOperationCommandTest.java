@@ -1,6 +1,7 @@
 package com.ntd.challenge.operations.v1.services.impl.operation_commands;
 
 import com.ntd.challenge.operations.v1.entities.enums.OperationTypeEnum;
+import com.ntd.challenge.operations.v1.exceptions.types.SquareRootNegativeNumberException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -74,7 +75,7 @@ public class SquareRootOperationCommandTest {
         SquareRootOperationCommand command = new SquareRootOperationCommand(value, precision);
 
         // Then
-        assertThrows(ArithmeticException.class, command::getOperationResult);
+        assertThrows(SquareRootNegativeNumberException.class, command::getOperationResult);
     }
 
     @Test

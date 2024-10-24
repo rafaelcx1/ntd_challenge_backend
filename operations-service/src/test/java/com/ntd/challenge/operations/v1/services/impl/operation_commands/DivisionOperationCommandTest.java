@@ -1,6 +1,7 @@
 package com.ntd.challenge.operations.v1.services.impl.operation_commands;
 
 import com.ntd.challenge.operations.v1.entities.enums.OperationTypeEnum;
+import com.ntd.challenge.operations.v1.exceptions.types.DivideByZeroException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -67,18 +68,14 @@ public class DivisionOperationCommandTest {
     }
 
     @Test
-    void getOperationResult_ShouldHandleZeroValue() {
+    void getOperationResult_ShouldThrowWhenValueIsZero() {
         // Given
         BigDecimal value = BigDecimal.ZERO;
         BigDecimal divisor = new BigDecimal("5.5");
         int scale = 2;
         DivisionOperationCommand command = new DivisionOperationCommand(value, divisor, scale);
 
-        // When
-        BigDecimal result = command.getOperationResult();
-
-        // Then
-        assertEquals(0, result.compareTo(BigDecimal.ZERO));  // Use compareTo to ignore scale differences
+        assertThrows(DivideByZeroException.class,command::getOperationResult);
     }
 
     @Test
@@ -93,7 +90,7 @@ public class DivisionOperationCommandTest {
         BigDecimal result = command.getOperationResult();
 
         // Then
-        assertEquals(new BigDecimal("3.374"), result);  // Rounded to 3 decimal places
+        assertEquals(new BigDecimal("3.374"), result);
     }
 }
 

@@ -39,6 +39,7 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
+    testRuntimeOnly 'com.h2database:h2'
 
     implementation 'org.modelmapper:modelmapper:3.0.0'
 
@@ -50,9 +51,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation "org.testcontainers:testcontainers:1.20.2"
-    testImplementation "org.testcontainers:junit-jupiter:1.20.2"
-    testImplementation "org.testcontainers:mysql:1.20.2"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

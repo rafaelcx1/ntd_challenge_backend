@@ -137,7 +137,7 @@ public class RecordServiceImplTest {
         try (MockedStatic<AuthContextUtils> authContextMock = mockStatic(AuthContextUtils.class)) {
             authContextMock.when(AuthContextUtils::getLoggedUserId).thenReturn(loggedUserId);
 
-            when(recordRepository.findByIdAndUserId(recordId, loggedUserId))
+            when(recordRepository.findByIdAndUserIdAndIsDeletedFalse(recordId, loggedUserId))
                     .thenReturn(Optional.of(record));
 
             // When
@@ -159,7 +159,7 @@ public class RecordServiceImplTest {
         try (MockedStatic<AuthContextUtils> authContextMock = mockStatic(AuthContextUtils.class)) {
             authContextMock.when(AuthContextUtils::getLoggedUserId).thenReturn(loggedUserId);
 
-            when(recordRepository.findByIdAndUserId(recordId, loggedUserId)).thenReturn(Optional.empty());
+            when(recordRepository.findByIdAndUserIdAndIsDeletedFalse(recordId, loggedUserId)).thenReturn(Optional.empty());
 
             // When & Then
             assertThrows(RecordNotFoundException.class, () -> {
