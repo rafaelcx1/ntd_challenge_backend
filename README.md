@@ -83,11 +83,11 @@ Technology Stack:
 
 # Logging
 
-The service includes a robust logging system from Grafana stack, where it can be accessed through this URL:
+The service includes a robust logging system using Grafana stack, where it can be accessed through this URL:
 ```
-http://localhost:5000
+http://localhost:5000/d/ae1rq8swlklq8a/main-dashboard?from=now-6h&to=now&timezone=browser&refresh=5s
 ```
-It already includes a simple logging dashboard where its possible to see logs for each microservice. You can access it through "dashboards -> Main Dashboard"
+It already includes a simple logging dashboard where its possible to see logs of requests for each microservice. You can access it with the link above or through menu "Dashboards -> Main Dashboard"
 
 # Tests
 The application has unit and integration tests to validate the features.
